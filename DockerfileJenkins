@@ -1,0 +1,32 @@
+# Download base image ubuntu 20.04
+FROM ubuntu:latest
+
+# LABEL about the custom image
+LABEL maintainer="k.mindji@itech-progress.com"
+LABEL version="1.0"
+LABEL description="This is custom Docker Image for \
+the Jenkins Services."
+# Disable Prompt During Packages Installation
+ARG DEBIAN_FRONTEND=noninteractive
+# Set the default port but allow to be overriden via a build parameter
+ARG HTTP_PORT=8080
+# Environment variables
+ENV HTTP_PORT=${HTTP_PORT}
+
+# install apt-utils
+RUN apt-get update && apt-get install -y apt-utils
+#RUN apt-get update && apt-get install -y gnupg2 gnupg gnupg1
+
+
+# installing jdk 8
+RUN apt-get update
+RUN apt-get update && apt-get install -y openjdk-11-jdk
+
+RUN apt-get update
+RUN apt-get update && apt-get install -y curl && apt-get update
+COPY jenkins.war jenkins.war
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "jenkins.war", "--httpPort=8080"]
+
+
